@@ -20,7 +20,8 @@ namespace Win10TileEditor
 			}
 		}
 
-		public FolderBrowser()
+        public TreeViewAdv TreeView { get { return treeView; } private set { } }
+        public FolderBrowser()
 		{
 			InitializeComponent();
 

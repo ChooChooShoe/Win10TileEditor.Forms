@@ -63,7 +63,6 @@ namespace Win10TileEditor
             this.treeColumn1 = new Aga.Controls.Tree.TreeColumn();
             this.treeColumn2 = new Aga.Controls.Tree.TreeColumn();
             this.nodeTextBox1 = new Aga.Controls.Tree.NodeControls.NodeTextBox();
-            this.colorSwatchPicker1 = new Win10TileEditor.ColorSwatchPicker();
             this.linkBrowser = new Win10TileEditor.FolderBrowser();
             this.menuStrip1.SuspendLayout();
             this.groupRequired.SuspendLayout();
@@ -285,6 +284,7 @@ namespace Win10TileEditor
             this.buttonSaveTile.TabIndex = 19;
             this.buttonSaveTile.Text = "Save Tile";
             this.buttonSaveTile.UseVisualStyleBackColor = true;
+            this.buttonSaveTile.Click += new System.EventHandler(this.buttonSaveTile_Click);
             // 
             // buttonDeleteTile
             // 
@@ -366,13 +366,6 @@ namespace Win10TileEditor
             this.nodeTextBox1.LeftMargin = 3;
             this.nodeTextBox1.ParentColumn = this.treeColumn1;
             // 
-            // colorSwatchPicker1
-            // 
-            this.colorSwatchPicker1.Location = new System.Drawing.Point(210, 94);
-            this.colorSwatchPicker1.Name = "colorSwatchPicker1";
-            this.colorSwatchPicker1.Size = new System.Drawing.Size(574, 430);
-            this.colorSwatchPicker1.TabIndex = 18;
-            // 
             // linkBrowser
             // 
             this.linkBrowser.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -388,7 +381,6 @@ namespace Win10TileEditor
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(784, 521);
-            this.Controls.Add(this.colorSwatchPicker1);
             this.Controls.Add(this.buttonRestoreBackup);
             this.Controls.Add(this.buttonLoadTile);
             this.Controls.Add(this.buttonDeleteTile);
@@ -447,7 +439,6 @@ namespace Win10TileEditor
         private TreeColumn treeColumn2;
         private Aga.Controls.Tree.NodeControls.NodeTextBox nodeTextBox1;
         private FolderBrowser linkBrowser;
-        private ColorSwatchPicker colorSwatchPicker1;
 
         public OpenPainter.ColorPicker.ColorPickerForm colorPicker { get; private set; }
         public Color userSelectedColor { get; set; }

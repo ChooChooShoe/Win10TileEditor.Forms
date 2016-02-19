@@ -132,10 +132,11 @@ namespace Win10TileEditor
             IWshRuntimeLibrary.IWshShortcut shortcut = shell.CreateShortcut(ItemPath);
             Description = shortcut.Description;
             TargetPath = shortcut.TargetPath;
-            var file = TargetPath.Substring(0, TargetPath.Length-3) + "visualelementsmanifest.xml";
-            Console.WriteLine(file);
-            if(File.Exists(file))
+            if(TargetPath != null && TargetPath.Length > 3)
+            {
+                var file = new FileInfo(TargetPath.Substring(0, TargetPath.Length - 3) + "VisualElementsManifest.xml");
                 ManifestData = new VisualManifest(file);
+            }
         }
 	}
 
@@ -145,7 +146,9 @@ namespace Win10TileEditor
         {
             get
             {
-                return this.File.Substring(0,File.LastIndexOf('\\')+1);
+                if (FileName == null)
+                    return null;
+                return this.FileName.DirectoryName;
             }
             set { }
         }
@@ -159,24 +162,27 @@ namespace Win10TileEditor
             set { }
         }
 
+
         public bool ShowName { get; set; }
         public bool UseDarkText { get; set; }
         public string ColorText { get; set; }
-        public string File { get; set; }
+        public FileInfo FileName { get; set; }
         public string image150Name { get; set; }
         public string image70Name { get; set; }
 
-        public VisualManifest (string file)
+        public VisualManifest (FileInfo file)
         {
-            this.File = file;
+            this.FileName = file;
             loadFromFile();
         }
-
-        private void loadFromFile()
+        
+        public void loadFromFile()
         {
+            if (FileName == null || !FileName.Exists)
+                return;
             try {
                 XmlDocument xml = new XmlDocument();
-                xml.Load(File);
+                xml.Load(FileName.FullName);
 
                 var node = xml.DocumentElement.SelectSingleNode("/Application/VisualElements");
                 this.ColorText = node.Attributes["BackgroundColor"].Value;
@@ -190,9 +196,52 @@ namespace Win10TileEditor
             }
             catch (Exception ex)
             {
-                //MessageBox.Show("Unable to load The file '" + File + "'. VISUAL XML", "An Error has occured", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Unable to load The file '" + FileName + "'. VISUAL XML", "An Error has occured", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 if (ex.Source != null)
                     Console.WriteLine("IOException source: {0}", ex.Source);
+            }
+        }
+        public bool saveToFile()
+        {
+
+            if (FileName == null)
+                return false;
+            try
+            {
+                XmlDocument xml = new XmlDocument();
+                var app = xml.CreateElement("Application");
+                app.SetAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+                var element = xml.CreateElement("VisualElements");
+                app.AppendChild(element);
+                xml.AppendChild(app);
+
+                element.SetAttribute("BackgroundColor", this.ColorText);
+                element.SetAttribute("ShowNameOnSquare150x150Logo", this.ShowName ? "on" : "off");
+                element.SetAttribute("ForegroundText", this.UseDarkText ? "dark" : "light");
+
+                if (this.image150Name != null)
+                {
+                    element.SetAttribute("Square150x150Logo", this.image150Name);
+
+                    if(this.image70Name != null)
+                        element.SetAttribute("Square70x70Logo", this.image70Name);
+                    else
+                        element.SetAttribute("Square70x70Logo", this.image150Name);
+                }
+                else if (this.image70Name != null)
+                {
+                    element.SetAttribute("Square150x150Logo", this.image70Name);
+                    element.SetAttribute("Square70x70Logo", this.image150Name);
+                }
+                xml.Save(this.FileName.FullName);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Unable to load The file '" + FileName + "'. VISUAL XML", "An Error has occured", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if (ex.Source != null)
+                    Console.WriteLine("IOException source: {0}", ex.Source);
+                return false;
             }
         }
     }

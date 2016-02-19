@@ -16,9 +16,9 @@ namespace Win10TileEditor
     public partial class MainForm : Form
     {
         public TileMaker tileMaker { get; set; }
-        public string image70FileName { get; private set; }
+        public FileInfo image70FileName { get; private set; }
         public Image image70Image { get; private set; }
-        public string image150FileName { get; private set; }
+        public FileInfo image150FileName { get; private set; }
         public Image image150Image { get; private set; }
 
         public MainForm(TileMaker tileMaker)
@@ -53,11 +53,12 @@ namespace Win10TileEditor
 
                 if (item.ManifestData.hasImageData)
                 {
-                    this.image150FileName = item.ManifestData.Path + item.ManifestData.image150Name;
-                    this.text150ImagePath.Text = this.image150FileName;
+                    this.image150FileName = new FileInfo(item.ManifestData.Path + "\\" + item.ManifestData.image150Name);
+                    this.text150ImagePath.Text = this.image150FileName.FullName;
                     this.pictureBox150.Image = LoadImageFile(this.image150FileName);
-                    this.image70FileName = item.ManifestData.Path + item.ManifestData.image70Name;
-                    this.text70ImagePath.Text = this.image70FileName;
+
+                    this.image70FileName = new FileInfo(item.ManifestData.Path + "\\" + item.ManifestData.image70Name);
+                    this.text70ImagePath.Text = this.image70FileName.FullName;
                     this.pictureBox70.Image = LoadImageFile(this.image70FileName);
                     clearImages = false;
                 }
@@ -70,6 +71,59 @@ namespace Win10TileEditor
                 this.image70FileName = null;
                 this.text70ImagePath.Text = "";
                 this.pictureBox70.Image = global::Win10TileEditor.Properties.Resources.NoIcon70x70;
+            }
+        }
+
+
+        internal void saveData()
+        {
+            FileInfo exeFile = new FileInfo(this.textExePath.Text);
+            
+
+            if (!exeFile.Exists)
+            {
+                return;
+            }
+            var baseName = exeFile.Name.Substring(0, exeFile.Name.Length - 3);
+
+            var visualPath = new FileInfo(exeFile.DirectoryName + "\\"+ baseName + "VisualElementsManifest.xml");
+
+            VisualManifest ManifestData = new VisualManifest(visualPath);
+
+            ManifestData.UseDarkText = this.radioButtonDarkText.Checked;
+            ManifestData.ShowName = this.checkBoxShowName.Checked;
+            ManifestData.ColorText = this.comboBoxColor.Text;
+            
+            if (image150FileName != null)//TODO Make this optinal
+            {
+                var fileIcon150 = baseName +  "Icon150x150" + this.image150FileName.Extension;
+                var fileIcon70 = baseName + "Icon70x70" + this.image70FileName.Extension;
+
+                ManifestData.image150Name = fileIcon150;
+                ManifestData.image70Name = fileIcon70;
+
+                fileIcon150 = exeFile.DirectoryName + "\\" + fileIcon150;
+                fileIcon70 = exeFile.DirectoryName + "\\" + fileIcon70;
+
+                if (File.Exists(fileIcon150))
+                    File.Delete(fileIcon150);
+
+                if (File.Exists(fileIcon70))
+                    File.Delete(fileIcon70);
+
+                this.image150FileName.CopyTo(fileIcon150);
+                this.image70FileName.CopyTo(fileIcon70);
+            }
+            if (ManifestData.saveToFile())
+            {
+                var tag = this.linkBrowser.TreeView.SelectedNode.Tag;
+
+                if (tag is FileItem)
+                {
+                    FileItem item = (FileItem)tag;
+                    File.SetLastWriteTime(item.ItemPath, System.DateTime.Now);
+                    this.loadItemData(item);
+                }
             }
         }
 
@@ -107,7 +161,8 @@ namespace Win10TileEditor
             openFileDialog.Title = "Open 150x150 Image";
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                this.image150FileName = openFileDialog.FileName;
+                this.image150FileName = new FileInfo(openFileDialog.FileName);
+                this.text150ImagePath.Text = openFileDialog.FileName;
                 this.pictureBox150.Image = LoadImageFile(this.image150FileName);
             }
         }
@@ -117,21 +172,22 @@ namespace Win10TileEditor
             openFileDialog.Title = "Open 70x70 Image";
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                this.image70FileName = openFileDialog.FileName;
+                this.image70FileName = new FileInfo( openFileDialog.FileName);
+                this.text70ImagePath.Text = openFileDialog.FileName;
                 this.pictureBox70.Image = LoadImageFile(this.image70FileName);
             }
         }
 
-        private Image LoadImageFile(string fileName)
+        private Image LoadImageFile(FileInfo fileName)
         {
             Image image = null;
             try
             {
-                image = Image.FromFile(fileName);
+                image = Image.FromFile(fileName.FullName);
             }
             catch (IOException ex)
             {
-                MessageBox.Show("Unable to load The file '" + fileName + "'. Is it a valid image file?", "An Error has occured", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Unable to load The file '" + fileName.Name + "'. Is it a valid image file?", "An Error has occured", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 if (ex.Source != null)
                     Console.WriteLine("IOException source: {0}", ex.Source);
             }
@@ -230,6 +286,11 @@ namespace Win10TileEditor
         private void treeViewLinks_AfterExpand(object sender, TreeViewEventArgs e)
         {
             e.Node.ImageIndex = 2;
+        }
+
+        private void buttonSaveTile_Click(object sender, EventArgs e)
+        {
+            this.saveData();
         }
     }
 }

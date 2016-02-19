@@ -1,3 +1,5 @@
+using Aga.Controls.Tree;
+
 namespace Win10TileEditor
 {
     partial class FolderBrowser
@@ -28,10 +30,10 @@ namespace Win10TileEditor
         /// </summary>
         private void InitializeComponent()
         {
-            this.treeView = new Aga.Controls.Tree.TreeViewAdv();
-            this.tcName = new Aga.Controls.Tree.TreeColumn();
-            this.tcTarget = new Aga.Controls.Tree.TreeColumn();
-            this.tcDate = new Aga.Controls.Tree.TreeColumn();
+            this.treeView = new TreeViewAdv();
+            this.tcName = new TreeColumn();
+            this.tcTarget = new TreeColumn();
+            this.tcDate = new TreeColumn();
             this.ncIcon = new Aga.Controls.Tree.NodeControls.NodeStateIcon();
             this.ncName = new Aga.Controls.Tree.NodeControls.NodeTextBox();
             this.ncSize = new Aga.Controls.Tree.NodeControls.NodeTextBox();
@@ -136,13 +138,13 @@ namespace Win10TileEditor
 
         #endregion
 
-        private Aga.Controls.Tree.TreeViewAdv treeView;
+        private TreeViewAdv treeView;
         private Aga.Controls.Tree.NodeControls.NodeStateIcon ncIcon;
         private Aga.Controls.Tree.NodeControls.NodeTextBox ncName;
         private Aga.Controls.Tree.NodeControls.NodeTextBox ncSize;
         private Aga.Controls.Tree.NodeControls.NodeTextBox ncDate;
-        private Aga.Controls.Tree.TreeColumn tcName;
-        private Aga.Controls.Tree.TreeColumn tcTarget;
-        private Aga.Controls.Tree.TreeColumn tcDate;
+        private TreeColumn tcName;
+        private TreeColumn tcTarget;
+        private TreeColumn tcDate;
     }
 }
