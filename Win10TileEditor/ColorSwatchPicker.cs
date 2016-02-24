@@ -20,9 +20,9 @@ namespace Win10TileEditor
         private GroupBox gOtherColors;
         private GroupBox gNamedColors;
         private TabPage pageSwatch;
-        private AdobeColors.HSB _hsl;
+        private HSB _hsl;
         private Color _rgb;
-        private AdobeColors.CMYK _cmyk;
+        private CMYK _cmyk;
 
         public ColorSwatchPicker()
         {
@@ -32,8 +32,8 @@ namespace Win10TileEditor
 
         private void InitializeComponent()
         {
-            OpenPainter.ColorPicker.AdobeColors.HSB hsb1 = new OpenPainter.ColorPicker.AdobeColors.HSB();
-            OpenPainter.ColorPicker.AdobeColors.HSB hsb2 = new OpenPainter.ColorPicker.AdobeColors.HSB();
+            OpenPainter.ColorPicker.HSB hsb1 = new OpenPainter.ColorPicker.HSB();
+            OpenPainter.ColorPicker.HSB hsb2 = new OpenPainter.ColorPicker.HSB();
             this.m_lbl_Primary_Color = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.tcMain = new System.Windows.Forms.TabControl();

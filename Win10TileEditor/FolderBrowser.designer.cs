@@ -30,47 +30,15 @@ namespace Win10TileEditor
         /// </summary>
         private void InitializeComponent()
         {
-            this.treeView = new TreeViewAdv();
-            this.tcName = new TreeColumn();
-            this.tcTarget = new TreeColumn();
-            this.tcDate = new TreeColumn();
+            this.tcName = new Aga.Controls.Tree.TreeColumn();
+            this.tcTarget = new Aga.Controls.Tree.TreeColumn();
+            this.tcDate = new Aga.Controls.Tree.TreeColumn();
             this.ncIcon = new Aga.Controls.Tree.NodeControls.NodeStateIcon();
             this.ncName = new Aga.Controls.Tree.NodeControls.NodeTextBox();
             this.ncSize = new Aga.Controls.Tree.NodeControls.NodeTextBox();
             this.ncDate = new Aga.Controls.Tree.NodeControls.NodeTextBox();
+            this.treeView = new Aga.Controls.Tree.TreeViewAdv();
             this.SuspendLayout();
-            // 
-            // treeView
-            // 
-            this.treeView.AllowColumnReorder = true;
-            this.treeView.AutoRowHeight = true;
-            this.treeView.BackColor = System.Drawing.SystemColors.Window;
-            this.treeView.Columns.Add(this.tcName);
-            this.treeView.Columns.Add(this.tcTarget);
-            this.treeView.Columns.Add(this.tcDate);
-            this.treeView.DefaultToolTipProvider = null;
-            this.treeView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeView.DragDropMarkColor = System.Drawing.Color.Black;
-            this.treeView.FullRowSelect = true;
-            this.treeView.GridLineStyle = Aga.Controls.Tree.GridLineStyle.Horizontal;
-            this.treeView.LineColor = System.Drawing.SystemColors.ControlDark;
-            this.treeView.LoadOnDemand = true;
-            this.treeView.Location = new System.Drawing.Point(0, 0);
-            this.treeView.Model = null;
-            this.treeView.Name = "treeView";
-            this.treeView.NodeControls.Add(this.ncIcon);
-            this.treeView.NodeControls.Add(this.ncName);
-            this.treeView.NodeControls.Add(this.ncSize);
-            this.treeView.NodeControls.Add(this.ncDate);
-            this.treeView.SelectedNode = null;
-            this.treeView.ShowNodeToolTips = true;
-            this.treeView.Size = new System.Drawing.Size(760, 327);
-            this.treeView.TabIndex = 0;
-            this.treeView.UseColumns = true;
-            this.treeView.NodeMouseClick += new System.EventHandler<Aga.Controls.Tree.TreeNodeAdvMouseEventArgs>(this._treeView_NodeMouseClick);
-            this.treeView.ColumnClicked += new System.EventHandler<Aga.Controls.Tree.TreeColumnEventArgs>(this._treeView_ColumnClicked);
-            this.treeView.SelectionChanged += new System.EventHandler(this._treeView_SelectionChanged);
-            this.treeView.MouseClick += new System.Windows.Forms.MouseEventHandler(this._treeView_MouseClick);
             // 
             // tcName
             // 
@@ -125,6 +93,37 @@ namespace Win10TileEditor
             this.ncDate.ParentColumn = this.tcDate;
             this.ncDate.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
+            // treeView
+            // 
+            this.treeView.AllowColumnReorder = true;
+            this.treeView.AutoRowHeight = true;
+            this.treeView.BackColor = System.Drawing.SystemColors.Window;
+            this.treeView.Columns.Add(this.tcName);
+            this.treeView.Columns.Add(this.tcTarget);
+            this.treeView.Columns.Add(this.tcDate);
+            this.treeView.DefaultToolTipProvider = null;
+            this.treeView.DragDropMarkColor = System.Drawing.Color.Black;
+            this.treeView.FullRowSelect = true;
+            this.treeView.GridLineStyle = Aga.Controls.Tree.GridLineStyle.Horizontal;
+            this.treeView.LineColor = System.Drawing.SystemColors.ControlDark;
+            this.treeView.LoadOnDemand = true;
+            this.treeView.Location = new System.Drawing.Point(3, 3);
+            this.treeView.Model = null;
+            this.treeView.Name = "treeView";
+            this.treeView.NodeControls.Add(this.ncIcon);
+            this.treeView.NodeControls.Add(this.ncName);
+            this.treeView.NodeControls.Add(this.ncSize);
+            this.treeView.NodeControls.Add(this.ncDate);
+            this.treeView.SelectedNode = null;
+            this.treeView.ShowNodeToolTips = true;
+            this.treeView.Size = new System.Drawing.Size(388, 321);
+            this.treeView.TabIndex = 0;
+            this.treeView.UseColumns = true;
+            this.treeView.NodeMouseClick += new System.EventHandler<Aga.Controls.Tree.TreeNodeAdvMouseEventArgs>(this._treeView_NodeMouseClick);
+            this.treeView.ColumnClicked += new System.EventHandler<Aga.Controls.Tree.TreeColumnEventArgs>(this._treeView_ColumnClicked);
+            this.treeView.SelectionChanged += new System.EventHandler(this._treeView_SelectionChanged);
+            this.treeView.MouseClick += new System.Windows.Forms.MouseEventHandler(this._treeView_MouseClick);
+            // 
             // FolderBrowser
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -137,8 +136,6 @@ namespace Win10TileEditor
         }
 
         #endregion
-
-        private TreeViewAdv treeView;
         private Aga.Controls.Tree.NodeControls.NodeStateIcon ncIcon;
         private Aga.Controls.Tree.NodeControls.NodeTextBox ncName;
         private Aga.Controls.Tree.NodeControls.NodeTextBox ncSize;
@@ -146,5 +143,6 @@ namespace Win10TileEditor
         private TreeColumn tcName;
         private TreeColumn tcTarget;
         private TreeColumn tcDate;
+        private TreeViewAdv treeView;
     }
 }
