@@ -11,6 +11,7 @@ namespace Aga.Controls.Tree.NodeControls
 	{
 		private Timer _timer;
 		private bool _editFlag;
+		private bool _editorDisposing;
 
 		#region Properties
 
@@ -22,6 +23,10 @@ namespace Aga.Controls.Tree.NodeControls
 			set { _editOnClick = value; }
 		}
 
+		public bool EditorDisposing
+		{
+			get { return _editorDisposing; }
+		}
 		#endregion
 
 		protected EditableControl()
@@ -59,6 +64,7 @@ namespace Aga.Controls.Tree.NodeControls
 		{
 			if (Parent != null && Parent.CurrentNode != null && CanEdit(Parent.CurrentNode))
 			{
+				_editorDisposing = false;
 				CancelEventArgs args = new CancelEventArgs();
 				OnEditorShowing(args);
 				if (!args.Cancel)
@@ -88,6 +94,7 @@ namespace Aga.Controls.Tree.NodeControls
 
 		internal void DoDisposeEditor(Control editor)
 		{
+			_editorDisposing = true;
 			DisposeEditor(editor);
 		}
 
@@ -129,7 +136,7 @@ namespace Aga.Controls.Tree.NodeControls
 					BeginEdit();
 					args.Handled = true;
 				}
-				else if (_editFlag)// && args.Node.IsSelected)
+				else if (_editFlag && !args.JustGotFocus)// && args.Node.IsSelected)
 					_timer.Start();
 			}
 		}

@@ -117,6 +117,7 @@ namespace Aga.Controls.Tree
 		private void DrawRow(PaintEventArgs e, ref DrawContext context, int row, Rectangle rowRect)
 		{
 			TreeNodeAdv node = RowMap[row];
+			if (node.IsHidden) return;
 			context.DrawSelection = DrawSelectionMode.None;
 			context.CurrentEditorOwner = CurrentEditorOwner;
 			if (DragMode)
@@ -126,7 +127,7 @@ namespace Aga.Controls.Tree
 			}
 			else
 			{
-				if (node.IsSelected && Focused)
+				if (node.IsSelected && (Focused || !InactiveSelection))
 					context.DrawSelection = DrawSelectionMode.Active;
 				else if (node.IsSelected && !Focused && !HideSelection)
 					context.DrawSelection = DrawSelectionMode.Inactive;
@@ -143,12 +144,12 @@ namespace Aga.Controls.Tree
 					Rectangle focusRect = new Rectangle(OffsetX, rowRect.Y, ClientRectangle.Width, rowRect.Height);
 					if (context.DrawSelection == DrawSelectionMode.Active)
 					{
-						e.Graphics.FillRectangle(SystemBrushes.Highlight, focusRect);
+						e.Graphics.FillRectangle(new SolidBrush(_fullRowSelectActiveColor), focusRect);
 						context.DrawSelection = DrawSelectionMode.FullRowSelect;
 					}
 					else
 					{
-						e.Graphics.FillRectangle(SystemBrushes.InactiveBorder, focusRect);
+						e.Graphics.FillRectangle(new SolidBrush(_fullRowSelectInactiveColor), focusRect);
 						context.DrawSelection = DrawSelectionMode.None;
 					}
 				}
@@ -181,7 +182,10 @@ namespace Aga.Controls.Tree
 			PerformanceAnalyzer.Start("DrawColumnHeaders");
 			ReorderColumnState reorder = Input as ReorderColumnState;
 			int x = 0;
-			TreeColumn.DrawBackground(gr, new Rectangle(0, 0, ClientRectangle.Width + 2, ColumnHeaderHeight - 1), false, false);
+			if (Columns.Count > 0)
+				Columns[0].DrawBackground(gr, new Rectangle(0, 0, ClientRectangle.Width + 2, ColumnHeaderHeight - 1), false, false);
+			else
+				TreeColumn.DrawDefaultBackground(gr, new Rectangle(0, 0, ClientRectangle.Width + 2, ColumnHeaderHeight - 1), false, false);
 			gr.TranslateTransform(-OffsetX, 0);
 			foreach (TreeColumn c in Columns)
 			{
@@ -248,6 +252,7 @@ namespace Aga.Controls.Tree
 
 		private void DrawLines(Graphics gr, TreeNodeAdv node, Rectangle rowRect)
 		{
+			if (node.IsHidden) return;
 			if (UseColumns && Columns.Count > 0)
 				gr.SetClip(new Rectangle(0, rowRect.Y, Columns[0].Width, rowRect.Bottom));
 

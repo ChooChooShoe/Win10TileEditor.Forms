@@ -158,10 +158,15 @@ namespace Aga.Controls.Tree
 			}
 		}
 
+		internal void SetSelectedInternal(bool value)
+		{
+			_isSelected = value;
+		}
+
 		/// <summary>
 		/// Returns true if all parent nodes of this node are expanded.
 		/// </summary>
-		internal bool IsVisible
+		internal bool IsUnwrapped
 		{
 			get
 			{
@@ -200,6 +205,20 @@ namespace Aga.Controls.Tree
 					Expand();
 				else
 					Collapse();
+			}
+		}
+
+		private bool _isHidden;
+		public bool IsHidden
+		{
+			get { return this._isHidden || (_tag is Node && (_tag as Node).IsHidden); }
+			set
+			{
+				if (this._isHidden != value)
+				{
+					this._isHidden = value;
+					this._tree.SmartFullUpdate();
+				}
 			}
 		}
 

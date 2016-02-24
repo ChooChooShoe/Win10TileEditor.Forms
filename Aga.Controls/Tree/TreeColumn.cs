@@ -27,6 +27,8 @@ namespace Aga.Controls.Tree
 
 		private const int HeaderLeftMargin = 5;
         private const int HeaderRightMargin = 5;   
+		private const int HeaderTopMargin = 3;
+        private const int HeaderBottomMargin = 3; 
 		private const int SortOrderMarkMargin = 8;
 
         private TextFormatFlags _headerFlags;
@@ -215,6 +217,61 @@ namespace Aga.Controls.Tree
 			base.Dispose(disposing);
 		}
 
+		internal Size GetActualSize(DrawContext context)
+		{
+			if (IsVisible)
+			{
+				Size s = MeasureSize(context);
+				return new Size(s.Width + HeaderLeftMargin, HeaderTopMargin + s.Height + HeaderBottomMargin);
+			}
+			return Size.Empty;
+		}
+
+		public Size MeasureSize(DrawContext context)
+		{
+			return GetLabelSize(context);
+		}
+
+		protected Size GetLabelSize(DrawContext context)
+		{
+			return GetLabelSize(context, Header);
+		}
+
+		protected Size GetLabelSize(DrawContext context, string label)
+		{
+			PerformanceAnalyzer.Start("GetLabelSize");
+
+			Font font = GetDrawingFont(context, label);
+			Size s = Size.Empty;
+			if (UseCompatibleTextRendering)
+				s = TextRenderer.MeasureText(label, font);
+			else
+			{
+				SizeF sf = context.Graphics.MeasureString(label, font);
+				s = new Size((int)Math.Ceiling(sf.Width), (int)Math.Ceiling(sf.Height));
+			}
+
+			PerformanceAnalyzer.Finish("GetLabelSize");
+
+			if (!s.IsEmpty)
+				return s;
+			else
+				return new Size(10, font.Height);
+		}
+
+		protected Font GetDrawingFont(DrawContext context, string label)
+		{
+			return context.Font;
+		}
+
+		private bool _useCompatibleTextRendering = false;
+		[DefaultValue(false)]
+		public bool UseCompatibleTextRendering
+		{
+			get { return _useCompatibleTextRendering; }
+			set { _useCompatibleTextRendering = value; }
+		}
+
 		#region Draw
 
 		private static VisualStyleRenderer _normalRenderer;
@@ -246,7 +303,11 @@ namespace Aga.Controls.Tree
 			DrawBackground(gr, bounds, pressed, hot);
 			DrawContent(gr, bounds, font);
 		}
-
+		internal void DrawBackground(Graphics gr, Rectangle bounds, bool pressed, bool hot)
+		{
+			if (!OnDrawColHeaderBg(gr, bounds, pressed, hot))
+				DrawDefaultBackground(gr, bounds, pressed, hot);
+		}
         private void DrawContent(Graphics gr, Rectangle bounds, Font font)
         {
             Rectangle innerBounds = new Rectangle(bounds.X + HeaderLeftMargin, bounds.Y,
@@ -278,7 +339,6 @@ namespace Aga.Controls.Tree
             else
 				TextRenderer.DrawText(gr, Header, font, innerBounds, SystemColors.ControlText, _headerFlags);
         }
-
 		private void DrawSortMark(Graphics gr, Rectangle bounds, int x)
 		{
 			int y = bounds.Y + bounds.Height / 2 - 2;
@@ -301,8 +361,7 @@ namespace Aga.Controls.Tree
 		{
 			gr.FillRectangle(SystemBrushes.HotTrack, rect.X-1, rect.Y, 2, rect.Height);
 		}
-
-		internal static void DrawBackground(Graphics gr, Rectangle bounds, bool pressed, bool hot)
+		internal static void DrawDefaultBackground(Graphics gr, Rectangle bounds, bool pressed, bool hot)
 		{
 			if (Application.RenderWithVisualStyles)
 			{
@@ -364,6 +423,14 @@ namespace Aga.Controls.Tree
 		{
 			if (WidthChanged != null)
 				WidthChanged(this, EventArgs.Empty);
+		}
+		
+		public event EventHandler<DrawColHeaderBgEventArgs> DrawColHeaderBg;
+		private bool OnDrawColHeaderBg(Graphics gr, Rectangle bounds, bool pressed, bool hot)
+		{
+			DrawColHeaderBgEventArgs colBgArgs = new DrawColHeaderBgEventArgs(gr, bounds, pressed, hot);
+			if (this.DrawColHeaderBg != null) this.DrawColHeaderBg(this, colBgArgs);
+			return colBgArgs.Handled;
 		}
 
 		#endregion

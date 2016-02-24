@@ -152,6 +152,20 @@ namespace Aga.Controls.Tree
 			}
 		}
 
+		private bool _hidden;
+		public bool IsHidden
+		{
+			get { return _hidden; }
+			set 
+			{
+				if (_hidden != value)
+				{
+					_hidden = value;
+					NotifyModel();
+				}
+			}
+		}
+
 		private CheckState _checkState;
 		public virtual CheckState CheckState
 		{
@@ -243,15 +257,7 @@ namespace Aga.Controls.Tree
 		protected void NotifyModel()
 		{
 			TreeModel model = FindModel();
-			if (model != null && Parent != null)
-			{
-				TreePath path = model.GetPath(Parent);
-				if (path != null)
-				{
-					TreeModelEventArgs args = new TreeModelEventArgs(path, new int[] { Index }, new object[] { this });
-					model.OnNodesChanged(args);
-				}
-			}
+			if (model != null && Parent != null) model.OnNodesChanged(Parent, Index, this);
 		}
 	}
 }

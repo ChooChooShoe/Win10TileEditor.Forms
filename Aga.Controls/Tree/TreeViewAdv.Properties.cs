@@ -13,6 +13,7 @@ namespace Aga.Controls.Tree
 	public partial class TreeViewAdv
 	{
 		private Cursor _innerCursor = null;
+		private IHeaderLayout _headerLayout;
 
 		public override Cursor Cursor
 		{
@@ -52,14 +53,21 @@ namespace Aga.Controls.Tree
 			}
 		}
 
-		internal int ColumnHeaderHeight
+		[DefaultValue(20), Category("Appearance")]
+		public int ColumnHeaderHeight
 		{
 			get
 			{
 				if (UseColumns)
-					return _columnHeaderHeight;
-				else
-					return 0;
+					return _headerLayout.PreferredHeaderHeight;
+				return 0;
+			}
+			set
+			{
+				if (value < 0)
+					throw new ArgumentOutOfRangeException("value");
+				_headerLayout.PreferredHeaderHeight = value;
+				FullUpdate();
 			}
 		}
 
@@ -155,6 +163,25 @@ namespace Aga.Controls.Tree
 			}
 		}
 
+		/// <summary>
+		/// Number of all visible, non-hidden nodes (which parent is expanded)
+		/// </summary>
+		internal int VisibleRowCount
+		{
+			get
+			{
+				int visibleCount = 0;
+				for (int i = 0; i < this.RowMap.Count; i++)
+				{
+					if (this.RowMap[i].IsHidden)
+						continue;
+
+					visibleCount++;
+				}
+				return visibleCount;
+			}
+		}
+
 		private int _contentWidth = 0;
 		private int ContentWidth
 		{
@@ -212,6 +239,22 @@ namespace Aga.Controls.Tree
 		#region Public Properties
 
 		#region DesignTime
+
+		private Color _fullRowSelectActiveColor;
+		[Category("Appearance")]
+		public Color FullRowSelectActiveColor
+		{
+			get { return _fullRowSelectActiveColor; }
+			set { _fullRowSelectActiveColor = value; }
+		}
+
+		private Color _fullRowSelectInactiveColor;
+		[Category("Appearance")]
+		public Color FullRowSelectInactiveColor
+		{
+			get { return _fullRowSelectInactiveColor; }
+			set { _fullRowSelectInactiveColor = value; }
+		}
 
 		private bool _shiftFirstNode;
 		[DefaultValue(false), Category("Behavior")]
@@ -401,6 +444,28 @@ namespace Aga.Controls.Tree
 			}
 		}
 
+		private bool _autoHeaderHeight = false;
+		/// <summary>
+		/// Set to true to expand header height to fit the text of it's largest column.
+		/// </summary>
+		[DefaultValue(false), Category("Appearance"), Description("Expand each header height to fit the text of it's largest column.")]
+		public bool AutoHeaderHeight
+		{
+			get
+			{
+				return _autoHeaderHeight;
+			}
+			set
+			{
+				_autoHeaderHeight = value;
+				if (value)
+					_headerLayout = new AutoHeaderHeightLayout(this, ColumnHeaderHeight);
+				else
+					_headerLayout = new FixedHeaderHeightLayout(this, ColumnHeaderHeight);
+				FullUpdate();
+			}
+		}
+
         private GridLineStyle _gridLineStyle = GridLineStyle.None;
         [DefaultValue(GridLineStyle.None), Category("Appearance")]
         public GridLineStyle GridLineStyle
@@ -455,6 +520,18 @@ namespace Aga.Controls.Tree
 			set
 			{
 				_hideSelection = value;
+				UpdateView();
+			}
+		}
+
+		bool _inactiveSelection = true;
+		[DefaultValue(true), Category("Behavior")]
+		public bool InactiveSelection
+		{
+			get { return _inactiveSelection; }
+			set
+			{
+				_inactiveSelection = value;
 				UpdateView();
 			}
 		}
@@ -618,6 +695,17 @@ namespace Aga.Controls.Tree
 							node = node.BottomNode;
 					}
 				}
+			}
+		}
+
+		[Browsable(false)]
+		public Predicate<TreeNodeAdv> NodeFilter
+		{
+			get { return this._viewNodeFilter; }
+			set
+			{
+				this._viewNodeFilter = value;
+				this.UpdateNodeFilter();
 			}
 		}
 

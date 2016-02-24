@@ -45,6 +45,7 @@ namespace Aga.Controls.Tree.NodeControls
 			textBox.BorderStyle = BorderStyle.FixedSingle;
 			textBox.TextChanged += EditorTextChanged;
 			textBox.KeyDown += EditorKeyDown;
+			textBox.BorderStyle = BorderStyle.None;
 			_label = textBox.Text;
 			SetEditControlProperties(textBox, node);
 			return textBox;
