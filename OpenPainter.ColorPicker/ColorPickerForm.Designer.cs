@@ -130,6 +130,7 @@ namespace OpenPainter.ColorPicker
             // 
             // m_cmd_OK
             // 
+            this.m_cmd_OK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.m_cmd_OK.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.m_cmd_OK.Location = new System.Drawing.Point(415, 11);
             this.m_cmd_OK.Name = "m_cmd_OK";
@@ -140,6 +141,7 @@ namespace OpenPainter.ColorPicker
             // 
             // m_cmd_Cancel
             // 
+            this.m_cmd_Cancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.m_cmd_Cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.m_cmd_Cancel.Location = new System.Drawing.Point(415, 41);
             this.m_cmd_Cancel.Name = "m_cmd_Cancel";
@@ -533,16 +535,19 @@ namespace OpenPainter.ColorPicker
             // 
             // m_ctrl_ThinBox
             // 
+            this.m_ctrl_ThinBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.m_ctrl_ThinBox.BaseColorComponent = OpenPainter.ColorPicker.ColorComponent.Hue;
             this.m_ctrl_ThinBox.Location = new System.Drawing.Point(269, 30);
             this.m_ctrl_ThinBox.Name = "m_ctrl_ThinBox";
             this.m_ctrl_ThinBox.RGB = System.Drawing.Color.Red;
-            this.m_ctrl_ThinBox.Size = new System.Drawing.Size(39, 264);
+            this.m_ctrl_ThinBox.Size = new System.Drawing.Size(40, 264);
             this.m_ctrl_ThinBox.TabIndex = 38;
             this.m_ctrl_ThinBox.WebSafeColorsOnly = false;
             this.m_ctrl_ThinBox.SelectionChanged += new System.EventHandler(this.m_ctrl_ThinBox_SelectionChanged);
             // 
-            // frmColorPicker
+            // ColorPickerForm
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.CancelButton = this.m_cmd_Cancel;
@@ -592,10 +597,9 @@ namespace OpenPainter.ColorPicker
             this.Controls.Add(this.m_lbl_Yellow_Symbol);
             this.Controls.Add(this.m_lbl_Magenta_Symbol);
             this.Controls.Add(this.m_lbl_Cyan_Symbol);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "frmColorPicker";
+            this.Name = "ColorPickerForm";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Color Picker";

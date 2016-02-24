@@ -59,7 +59,7 @@ namespace OpenPainter.ColorPicker
             this.Size = new Size(260, 260);
 
             //	Initialize Colors
-            hsb = new AdobeColors.HSB(1, 1, 1);
+            hsb = new HSB(1, 1, 1);
             rgb = hsb.ToRGB();
 
             baseColorComponent = ColorComponent.Hue;
@@ -82,11 +82,11 @@ namespace OpenPainter.ColorPicker
             }
         }
 
-        private AdobeColors.HSB hsb;
+        private HSB hsb;
         /// <summary>
         /// Gets or sets the color in HSB mode. <see cref="RGB"/> property will be accordingly updated.
         /// </summary>
-        public AdobeColors.HSB HSB
+        public HSB HSB
         {
             get { return hsb; }
             set
@@ -270,7 +270,7 @@ namespace OpenPainter.ColorPicker
             //	The selected color determines the color of the marker drawn over
             //	it (black or white)
             Pen pen;
-            AdobeColors.HSB _hsl = GetColor(x, y);
+            HSB _hsl = GetColor(x, y);
             if (_hsl.B < (double)200 / 255)
             {
                 pen = new Pen(Color.White);									//	White marker if selected color is dark
@@ -353,21 +353,21 @@ namespace OpenPainter.ColorPicker
                         switch (comp)
                         {
                             case ColorComponent.Hue:
-                                color = AdobeColors.ToRGB(new AdobeColors.HSB(
+                                color = AdobeColors.ToRGB(new HSB(
                                     hsb.H,
                                     x / 255.0,
                                     1 - y / 255.0));
                                 break;
 
                             case ColorComponent.Saturation:
-                                color = AdobeColors.ToRGB(new AdobeColors.HSB(
+                                color = AdobeColors.ToRGB(new HSB(
                                     x / 255.0,
                                     hsb.S,
                                     1 - y / 255.0));
                                 break;
 
                             case ColorComponent.Brightness:
-                                color = AdobeColors.ToRGB(new AdobeColors.HSB(
+                                color = AdobeColors.ToRGB(new HSB(
                                     x / 255.0,
                                     1 - y / 255.0,
                                     hsb.B));
@@ -400,7 +400,7 @@ namespace OpenPainter.ColorPicker
 
                         if (webSafeColorsOnly)
                         {
-                            color = AdobeColors.GetNearestWebSafeColor(color);
+                            color = color.GetNearestWebSafeColor();
                         }
 
                         byte* pt = pt0 + mapData.Stride * bitmapY + 3 * bitmapX;
@@ -502,9 +502,9 @@ namespace OpenPainter.ColorPicker
             }
         }
 
-        private AdobeColors.HSB GetColor(int x, int y)
+        private HSB GetColor(int x, int y)
         {
-            AdobeColors.HSB _hsb = new AdobeColors.HSB();
+            HSB _hsb = new HSB();
 
             switch (baseColorComponent)
             {

@@ -48,7 +48,7 @@ namespace OpenPainter.ColorPicker
 	/// A vertical slider control that shows a range for a color property (a.k.a. Hue, Saturation, Brightness,
 	/// Red, Green, Blue) and sends an event when the slider is changed.
 	/// </summary>
-	public class VerticalColorSlider : System.Windows.Forms.UserControl
+	public class VerticalColorSlider : UserControl
 	{
 		public VerticalColorSlider()
 		{
@@ -56,15 +56,12 @@ namespace OpenPainter.ColorPicker
 			InitializeComponent();
 
 			//	Initialize Colors
-			_hsb = new AdobeColors.HSB();
-			_hsb.H = 1.0;
-			_hsb.S = 1.0;
-			_hsb.B = 1.0;
-			_rgb = AdobeColors.ToRGB(_hsb);
-			_baseColorComponent = ColorComponent.Hue;
+			hsb = new HSB(1.0, 1.0, 1.0);
+			rgb = hsb.ToRGB();
+			baseColorComponent = ColorComponent.Hue;
 		}
 
-        private ColorComponent _baseColorComponent = ColorComponent.Hue;
+        private ColorComponent baseColorComponent;
 		/// <summary>
         /// Gets or sets the base color component which is fixed.
         /// </summary>
@@ -72,40 +69,40 @@ namespace OpenPainter.ColorPicker
 		{
 			get
 			{
-				return _baseColorComponent;
+				return baseColorComponent;
 			}
 			set
 			{
-				_baseColorComponent = value;
+				baseColorComponent = value;
 
 				//	Redraw the control based on the new ColorComponent
-				ResetSlider(true);
-				RedrawAll();
+				SetSliderToContolColors(false);
+				RedrawAll(CreateGraphics());
 			}
 		}
 
-        private AdobeColors.HSB	_hsb;
+        private HSB	hsb;
 		/// <summary>
         /// Gets or sets the color in HSB mode. <see cref="RGB"/> property will be accordingly updated.
         /// </summary>
-		public AdobeColors.HSB HSB
+		public HSB HSB
 		{
 			get
 			{
-				return _hsb;
+				return hsb;
 			}
 			set
 			{
-				_hsb = value;
-				_rgb = AdobeColors.ToRGB(_hsb);
+				hsb = value;
+				rgb = AdobeColors.ToRGB(hsb);
 
 				//	Redraw the control based on the new color.
-				ResetSlider(true);
-				DrawContent();
-			}
+				SetSliderToContolColors(true);
+                DrawContent(CreateGraphics());
+            }
 		}
 
-        private Color _rgb;
+        private Color rgb;
 		/// <summary>
         /// Gets or sets the color in RGB mode. <see cref="HSB"/> property will be accordingly updated.
         /// </summary>
@@ -113,20 +110,20 @@ namespace OpenPainter.ColorPicker
         {
             get
             {
-                return _rgb;
+                return rgb;
             }
             set
             {
-                _rgb = value;
-                _hsb = AdobeColors.ToHSB(_rgb);
+                rgb = value;
+                hsb = AdobeColors.ToHSB(rgb);
 
                 //	Redraw the control based on the new color.
-                ResetSlider(true);
-                DrawContent();
+                SetSliderToContolColors(true);
+                DrawContent(CreateGraphics());
             }
         }
 
-        private bool _webSafeColorsOnly = false;
+        private bool webSafeColorsOnly = false;
         /// <summary>
         /// Gets or sets a boolean value that indicates where only the web colors are available.
         /// </summary>
@@ -134,12 +131,12 @@ namespace OpenPainter.ColorPicker
         {
             get
             {
-                return _webSafeColorsOnly;
+                return webSafeColorsOnly;
             }
             set
             {
-                _webSafeColorsOnly = value;
-                RedrawAll();
+                webSafeColorsOnly = value;
+                RedrawAll(CreateGraphics());
             }
         }
 
@@ -149,7 +146,7 @@ namespace OpenPainter.ColorPicker
         /// Occurs when the selected color has been changed.
         /// </summary>
         public event EventHandler SelectionChanged;
-
+        
         /// <summary>
         /// Raises the <see cref="SelectionChanged"/> event.
         /// </summary>
@@ -157,10 +154,7 @@ namespace OpenPainter.ColorPicker
         protected virtual void OnSelectionChanged(EventArgs e)
         {
             if (SelectionChanged != null)
-            {
-                EventHandler handler = SelectionChanged;
-                handler(this, e);
-            }
+                SelectionChanged(this, e);
         }
 
 		#endregion
@@ -173,137 +167,147 @@ namespace OpenPainter.ColorPicker
 		/// </summary>
 		private void InitializeComponent()
 		{
-			// 
-			// ctrl1DColorBar
-			// 
-			this.Name = "ctrl1DColorBar";
-			this.Size = new System.Drawing.Size(40, 264);
-		}
+            this.SuspendLayout();
+            // 
+            // VerticalColorSlider
+            // 
+            this.MinimumSize = new System.Drawing.Size(22, 25);
+            this.Name = "VerticalColorSlider";
+            this.Size = new System.Drawing.Size(40, 264);
+            //this.Load += new System.EventHandler(this.VerticalColorSlider_RedrawAll);
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.VerticalColorSlider_Paint);
+            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.VerticalColorSlider_MouseDown);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.VerticalColorSlider_MouseMove);
+            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.VerticalColorSlider_MouseUp);
+            this.Resize += new System.EventHandler(this.VerticalColorSlider_RedrawAll);
+            this.ResumeLayout(false);
 
-		#endregion
+        }
+
+        private void VerticalColorSlider_RedrawAll(object sender, EventArgs e)
+        {
+            Console.WriteLine("Redraw all event");
+            RedrawAll(CreateGraphics());
+        }
+        private void VerticalColorSlider_Paint(object sender, PaintEventArgs e)
+        {
+            Console.WriteLine("Paint event");
+            RedrawAll(e.Graphics);
+        }
+
+        #endregion
 
         #region User Input
 
-        private int _markerStartY = 0;
-        private bool _isDragging = false;
+        private int markerStartY = 0;
+        private bool isDragging = false;
 
-        protected override void OnMouseDown(MouseEventArgs e)
+        private void VerticalColorSlider_MouseDown(object sender, MouseEventArgs e)
         {
-            base.OnMouseDown(e);
-
             if (e.Button.HasFlag(MouseButtons.Left))
             {
-                _isDragging = true;
-
+                isDragging = true;
                 SliderMoved(e.Y);
             }
-		}
-
-        protected override void OnMouseMove(MouseEventArgs e)
+        }
+        private void VerticalColorSlider_MouseMove(object sender, MouseEventArgs e)
         {
-            base.OnMouseMove(e);
-
-            if (_isDragging)
+            if (isDragging)
             {
                 SliderMoved(e.Y);
             }
-		}
+        }
 
-        protected override void OnMouseUp(MouseEventArgs e)
+        private void VerticalColorSlider_MouseUp(object sender, MouseEventArgs e)
         {
-            base.OnMouseUp(e);
-
             if (e.Button.HasFlag(MouseButtons.Left))
             {
-                _isDragging = false;
-
+                isDragging = false;
                 SliderMoved(e.Y);
             }
-		}
+        }
 
         private void SliderMoved(int y)
         {
             y -= 4;
             y = y.LimitInRange(0, this.Height - 9);
 
-            if (y == _markerStartY)
-            {
+            if (y == markerStartY)
                 return;
-            }
 
-            DrawSlider(y, false);	//	Redraw the slider
-            ResetHSLRGB();			//	Reset the color
+            DrawSlider(y, false, CreateGraphics()); //	Redraw the slider if needed
+            
+            //Updates the rgb / hsb color to the new location.
+
+            double height = this.Height - 9;
+
+            switch (baseColorComponent)
+            {
+                case ColorComponent.Hue:
+                    hsb.H = 1.0 - (double)markerStartY / height;
+                    rgb = hsb.ToRGB();
+                    break;
+                case ColorComponent.Saturation:
+                    hsb.S = 1.0 - (double)markerStartY / height;
+                    rgb = hsb.ToRGB();
+                    break;
+                case ColorComponent.Brightness:
+                    hsb.B = 1.0 - (double)markerStartY / height;
+                    rgb = hsb.ToRGB();
+                    break;
+                case ColorComponent.Red:
+                    rgb = Color.FromArgb(255 - (int)Math.Round(255 * (double)markerStartY / height), rgb.G, rgb.B);
+                    hsb = rgb.ToHSB();
+                    break;
+                case ColorComponent.Green:
+                    rgb = Color.FromArgb(rgb.R, 255 - (int)Math.Round(255 * (double)markerStartY / height), rgb.B);
+                    hsb = rgb.ToHSB();
+                    break;
+                case ColorComponent.Blue:
+                    rgb = Color.FromArgb(rgb.R, rgb.G, 255 - (int)Math.Round(255 * (double)markerStartY / height));
+                    hsb = rgb.ToHSB();
+                    break;
+            }
 
             OnSelectionChanged(EventArgs.Empty);
         }
 
         #endregion
 
-        #region Control Event Overrides
+        #region Rendering
 
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-
-            RedrawAll();
-		}
-
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            base.OnPaint(e);
-
-            RedrawAll();
-		}
-
-        protected override void OnResize(EventArgs e)
-        {
-            base.OnResize(e);
-
-            RedrawAll();
-		}
-
-		#endregion
-
-		#region Rendering
-
-		/// <summary>
-		/// Redraws the background over the slider area on both sides of the control
-		/// </summary>
-		private void ClearSlider()
+        /// <summary>
+        /// Redraws the background over the slider area on both sides of the control
+        /// </summary>
+        /// <param name="g">The Graphics to use when drawing</param>
+        private void ClearSlider(Graphics g)
 		{
-			Graphics g = this.CreateGraphics();
-
-			Brush brush = System.Drawing.SystemBrushes.Control;
+			Brush brush = new SolidBrush(BackColor);
 			g.FillRectangle(brush, 0, 0, 8, this.Height);				//	clear left hand slider
 			g.FillRectangle(brush, this.Width - 8, 0, 8, this.Height);	//	clear right hand slider
 		}
 
-		/// <summary>
-		/// Draws the slider arrows on both sides of the control.
-		/// </summary>
-		/// <param name="position">position value of the slider, lowest being at the bottom.  The range
-		/// is between 0 and the controls height-9.  The values will be adjusted if too large/small</param>
-		/// <param name="Unconditional">If Unconditional is true, the slider is drawn, otherwise some logic 
-		/// is performed to determine is drawing is really neccessary.</param>
-        private void DrawSlider(int position, bool force)
+        /// <summary>
+        /// Draws the slider arrows on both sides of the control.
+        /// </summary>
+        /// <param name="position">position value of the slider, lowest being at the bottom.  The range
+        /// is between 0 and the controls height-9.  The values will be adjusted if too large/small</param>
+        /// <param name="force">If force is true, the slider always drawn even if it has not moved since last draw.</param>
+        /// <param name="g">The Graphics to use when drawing</param>
+        private void DrawSlider(int position, bool force, Graphics g)
         {
             position = position.LimitInRange(0, this.Height - 9);
 
-            if (_markerStartY == position && !force)
-            {
+            if (markerStartY == position && !force)
                 return;
-            }
-
+            
             // Update the controls marker position.
-            _markerStartY = position;	
-
+            markerStartY = position;
+            
             // Remove old slider.
-            this.ClearSlider();		
-
-            Graphics g = this.CreateGraphics();
-
-            Pen pencil = new Pen(Color.FromArgb(116, 114, 106));
-            Brush brush = Brushes.White;
+            this.ClearSlider(g);		
+            
+            Pen pen = new Pen(Color.FromArgb(116, 114, 106));
 
             Point[] arrow = new Point[7];				//	 GGG
             arrow[0] = new Point(1, position);			//	G   G
@@ -315,8 +319,8 @@ namespace OpenPainter.ColorPicker
             arrow[6] = new Point(0, position + 1);		//	G   G
                                                         //	 GGG
 
-            g.FillPolygon(brush, arrow);	//	Fill left arrow with white
-            g.DrawPolygon(pencil, arrow);	//	Draw left arrow border with gray
+            g.FillPolygon(Brushes.White, arrow);	//	Fill left arrow with white
+            g.DrawPolygon(pen, arrow);	//	Draw left arrow border with gray
 
                                                                 //	    GGG
             arrow[0] = new Point(this.Width - 2, position);		//	   G   G
@@ -326,53 +330,47 @@ namespace OpenPainter.ColorPicker
             arrow[4] = new Point(this.Width - 2, position + 8);	//	 G     G
             arrow[5] = new Point(this.Width - 1, position + 7);	//	  G    G
             arrow[6] = new Point(this.Width - 1, position + 1);	//	   G   G
-            //	    GGG
+                                                                //	    GGG
 
-            g.FillPolygon(brush, arrow);	//	Fill right arrow with white
-            g.DrawPolygon(pencil, arrow);	//	Draw right arrow border with gray
+            g.FillPolygon(Brushes.White, arrow);	//	Fill right arrow with white
+            g.DrawPolygon(pen, arrow);	//	Draw right arrow border with gray
         }
 
-		/// <summary>
-		/// Draws the border around the control, in this case the border around the content area between
-		/// the slider arrows.
-		/// </summary>
-        private void DrawBorder()
+        /// <summary>
+        /// Draws the border around the control, in this case the border around the content area between
+        /// the slider arrows.
+        /// </summary>
+        /// <param name="g">The Graphics to use when drawing</param>
+        private void DrawBorder(Graphics g)
         {
-            Graphics g = this.CreateGraphics();
-
-            Pen pencil;
-
             //	To make the control look like Adobe Photoshop's the border around the control will be a gray line
             //	on the top and left side, a white line on the bottom and right side, and a black rectangle (line) 
             //	inside the gray/white rectangle
 
-            pencil = new Pen(Color.FromArgb(172, 168, 153));	//	The same gray color used by Photoshop
-            g.DrawLine(pencil, this.Width - 10, 2, 9, 2);	//	Draw top line
-            g.DrawLine(pencil, 9, 2, 9, this.Height - 4);	//	Draw left hand line
+            Pen pen = new Pen(Color.FromArgb(172, 168, 153));	//	The same gray color used by Photoshop
+            g.DrawLine(pen, this.Width - 10, 2, 9, 2);	//	Draw top line
+            g.DrawLine(pen, 9, 2, 9, this.Height - 4);	//	Draw left hand line
 
-            pencil = new Pen(Color.White);
-            g.DrawLine(pencil, this.Width - 9, 2, this.Width - 9, this.Height - 3);	//	Draw right hand line
-            g.DrawLine(pencil, this.Width - 9, this.Height - 3, 9, this.Height - 3);	//	Draw bottome line
+            pen = new Pen(Color.White);
+            g.DrawLine(pen, this.Width - 9, 2, this.Width - 9, this.Height - 3);	//	Draw right hand line
+            g.DrawLine(pen, this.Width - 9, this.Height - 3, 9, this.Height - 3);	//	Draw bottome line
 
-            pencil = new Pen(Color.Black);
-            g.DrawRectangle(pencil, 10, 3, this.Width - 20, this.Height - 7);	//	Draw inner black rectangle
+            pen = new Pen(Color.Black);
+            g.DrawRectangle(pen, 10, 3, this.Width - 20, this.Height - 7);	//	Draw inner black rectangle
         }
 
-		/// <summary>
-		/// Evaluates the DrawStyle of the control and calls the appropriate
-		/// drawing function for content
-		/// </summary>
-		private void DrawContent()
+        /// <summary>
+        /// Evaluates the DrawStyle of the control and calls the appropriate
+        /// drawing function for content
+        /// </summary>
+        /// <param name="g">The Graphics to use when drawing</param>
+        private void DrawContent(Graphics g)
 		{
-            Rectangle rect = new Rectangle(
-                0,
-                0,
-                this.Width - 21,
-                this.Height - 8);
-            Bitmap map = GetColorStripBitmap(rect, (ColorComponent)_baseColorComponent);
-
-            Graphics g = this.CreateGraphics();
-            g.DrawImageUnscaled(map, 11, 4);
+            //40-21, 264-8
+            Rectangle rect = new Rectangle(0, 0, Width - 21, 256);
+            Bitmap map = GetColorStripBitmap(rect, baseColorComponent);
+            
+            g.DrawImage(map, 11, 4, Width-21, Height-8);
 
             map.Dispose();
         }
@@ -380,83 +378,48 @@ namespace OpenPainter.ColorPicker
         private Bitmap GetColorStripBitmap(Rectangle rect, ColorComponent comp)
         {
             Bitmap map = new Bitmap(rect.Width, rect.Height, PixelFormat.Format24bppRgb);
-            BitmapData mapData = map.LockBits(
-                new Rectangle(0, 0, map.Width, map.Height),
-                ImageLockMode.WriteOnly,
-                PixelFormat.Format24bppRgb);
-
-            int height = this.Height - 8;
-
+            BitmapData mapData = map.LockBits(rect, ImageLockMode.WriteOnly, PixelFormat.Format24bppRgb);
+            
             unsafe
             {
                 byte* pt0 = (byte*)mapData.Scan0;
 
                 Parallel.For(rect.Top, rect.Bottom, y =>
                 {
-                    int bitmapY = y - rect.Top;
+                    double dy =(double)y / 256.0;
 
                     Color color;
                     switch (comp)
                     {
                         case ColorComponent.Hue:
-                            color = AdobeColors.ToRGB(new AdobeColors.HSB(
-                                1.0 - (double)y / height,
-                                1,
-                                1));
+                            color = new HSB(1.0 - dy, 1, 1).ToRGB();
                             break;
-
                         case ColorComponent.Saturation:
-                            color = AdobeColors.ToRGB(new AdobeColors.HSB(
-                                _hsb.H,
-                                1.0 - (double)y / height,
-                                _hsb.B));
+                            color = new HSB(hsb.H, 1.0 - dy, hsb.B).ToRGB();
                             break;
-
                         case ColorComponent.Brightness:
-                            color = AdobeColors.ToRGB(new AdobeColors.HSB(
-                                _hsb.H,
-                                _hsb.S,
-                                1.0 - (double)y / height));
+                            color = new HSB(hsb.H, hsb.S, 1.0 - dy).ToRGB();
                             break;
-
                         case ColorComponent.Red:
-                            int red = 255 - (int)Math.Round(255 * (double)y / height);
-                            color = Color.FromArgb(
-                                red,
-                                _rgb.G,
-                                _rgb.B);
+                            color = Color.FromArgb(255 - (int)Math.Round(255 * dy), rgb.G, rgb.B);
                             break;
-
                         case ColorComponent.Green:
-                            int green = 255 - (int)Math.Round(255 * (double)y / height);
-                            color = Color.FromArgb(
-                                _rgb.R,
-                                green,
-                                _rgb.B);
+                            color = Color.FromArgb(rgb.R, 255 - (int)Math.Round(255 * dy), rgb.B);
                             break;
-
                         case ColorComponent.Blue:
-                            int blue = 255 - (int)Math.Round(255 * (double)y / height);
-                            color = Color.FromArgb(
-                                _rgb.R,
-                                _rgb.G,
-                                blue);
+                            color = Color.FromArgb(rgb.R, rgb.G, 255 - (int)Math.Round(255 * dy));
                             break;
-
                         default:
                             throw new ArgumentException();
                     }
 
-                    if (_webSafeColorsOnly)
-                    {
-                        color = AdobeColors.GetNearestWebSafeColor(color);
-                    }
+                    if (webSafeColorsOnly)
+                        color = color.GetNearestWebSafeColor();
 
-                    for (int x = rect.Left; x < rect.Right; x++)
+                    int bitmapY = y - rect.Top;
+                    for (int x = 0; x < rect.Width; x++)
                     {
-                        int bitmapX = x - rect.Left;
-
-                        byte* pt = pt0 + mapData.Stride * bitmapY + 3 * bitmapX;
+                        byte* pt = pt0 + mapData.Stride * bitmapY + 3 * x;
                         pt[2] = color.R;
                         pt[1] = color.G;
                         pt[0] = color.B;
@@ -468,86 +431,54 @@ namespace OpenPainter.ColorPicker
             return map;
         }
         
-		private void RedrawAll()
+		private void RedrawAll(Graphics g)
 		{
-			DrawSlider(_markerStartY, true);
-			DrawBorder();
-            DrawContent();
+			DrawSlider(markerStartY, true, g);
+            DrawContent(g);
+            DrawBorder(g);
 		}
 
 		/// <summary>
 		/// Resets the vertical position of the slider to match the controls color.  Gives the option of redrawing the slider.
 		/// </summary>
 		/// <param name="redraw">Set to true if you want the function to redraw the slider after determining the best position</param>
-        private void ResetSlider(bool redraw)
-        {
-            int height = this.Height - 8;
-
-            switch (_baseColorComponent)
-            {
-                case ColorComponent.Hue:
-                    _markerStartY = height - (int)Math.Round(height * _hsb.H);
-                    break;
-                case ColorComponent.Saturation:
-                    _markerStartY = height - (int)Math.Round(height * _hsb.S);
-                    break;
-                case ColorComponent.Brightness:
-                    _markerStartY = height - (int)Math.Round(height * _hsb.B);
-                    break;
-                case ColorComponent.Red:
-                    _markerStartY = height - (int)Math.Round(height * _rgb.R / 255.0);
-                    break;
-                case ColorComponent.Green:
-                    _markerStartY = height - (int)Math.Round(height * _rgb.G / 255.0);
-                    break;
-                case ColorComponent.Blue:
-                    _markerStartY = height - (int)Math.Round(height * _rgb.B / 255.0);
-                    break;
-            }
-
-            if (redraw)
-            {
-                DrawSlider(_markerStartY, true);
-            }
-        }
-
-
-		/// <summary>
-		/// Resets the controls color (both HSL and RGB variables) based on the current slider position
-		/// </summary>
-        private void ResetHSLRGB()
+        private void SetSliderToContolColors(bool redraw)
         {
             int height = this.Height - 9;
+            double val = 0;
 
-            switch (_baseColorComponent)
+            switch (baseColorComponent)
             {
                 case ColorComponent.Hue:
-                    _hsb.H = 1.0 - (double)_markerStartY / height;
-                    _rgb = AdobeColors.ToRGB(_hsb);
+                    val = hsb.H;
                     break;
                 case ColorComponent.Saturation:
-                    _hsb.S = 1.0 - (double)_markerStartY / height;
-                    _rgb = AdobeColors.ToRGB(_hsb);
+                    val = hsb.S;
                     break;
                 case ColorComponent.Brightness:
-                    _hsb.B = 1.0 - (double)_markerStartY / height;
-                    _rgb = AdobeColors.ToRGB(_hsb);
+                    val = hsb.B;
                     break;
                 case ColorComponent.Red:
-                    _rgb = Color.FromArgb(255 - (int)Math.Round(255 * (double)_markerStartY / height), _rgb.G, _rgb.B);
-                    _hsb = AdobeColors.ToHSB(_rgb);
+                    val = rgb.R / 255.0;
                     break;
                 case ColorComponent.Green:
-                    _rgb = Color.FromArgb(_rgb.R, 255 - (int)Math.Round(255 * (double)_markerStartY / height), _rgb.B);
-                    _hsb = AdobeColors.ToHSB(_rgb);
+                    val = rgb.G / 255.0;
                     break;
                 case ColorComponent.Blue:
-                    _rgb = Color.FromArgb(_rgb.R, _rgb.G, 255 - (int)Math.Round(255 * (double)_markerStartY / height));
-                    _hsb = AdobeColors.ToHSB(_rgb);
+                    val = rgb.B / 255.0;
                     break;
             }
+            int lastMarkerStartY = markerStartY;
+            markerStartY = height - (int)Math.Round(height * val);
+
+            //Only force a redraw if the maker has moved
+            if (redraw)
+                DrawSlider(markerStartY, lastMarkerStartY != markerStartY, CreateGraphics());
         }
 
-		#endregion
-	}
+        
+
+        #endregion
+
+    }
 }

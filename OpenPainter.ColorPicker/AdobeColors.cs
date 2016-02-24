@@ -39,13 +39,14 @@ using System.Drawing;
 
 namespace OpenPainter.ColorPicker
 {
+    #region Adobe Color Methods
+
     /// <summary>
     /// Collection of helper methods for working with AdobeColors and System.Drawing.Colors.
     /// </summary>
     public static class AdobeColors
     {
 
-        #region Public Methods
 
         /// <summary> 
         /// Sets the absolute brightness of a colour 
@@ -53,12 +54,11 @@ namespace OpenPainter.ColorPicker
         /// <param name="c">Original colour</param> 
         /// <param name="brightness">The luminance level to impose</param> 
         /// <returns>an adjusted colour</returns> 
-        [Obsolete]
-        public static Color SetBrightness(Color c, double brightness)
+        public static Color SetBrightness(this Color c, double brightness)
         {
-            HSB hsl = ToHSB(c);
+            HSB hsl = c.ToHSB();
             hsl.B = brightness;
-            return ToRGB(hsl);
+            return hsl.ToRGB();
         }
 
 
@@ -71,11 +71,11 @@ namespace OpenPainter.ColorPicker
         /// <param name="c">The original colour</param> 
         /// <param name="brightness">The luminance delta</param> 
         /// <returns>An adjusted colour</returns> 
-        public static Color ModifyBrightness(Color c, double brightness)
+        public static Color ModifyBrightness(this Color c, double brightness)
         {
-            HSB hsl = ToHSB(c);
+            HSB hsl = c.ToHSB();
             hsl.B *= brightness;
-            return ToRGB(hsl);
+            return hsl.ToRGB();
         }
 
 
@@ -86,11 +86,11 @@ namespace OpenPainter.ColorPicker
         /// <param name="c">An original colour</param> 
         /// <param name="Saturation">The saturation value to impose</param> 
         /// <returns>An adjusted colour</returns> 
-        public static Color SetSaturation(Color c, double Saturation)
+        public static Color SetSaturation(this Color c, double Saturation)
         {
-            HSB hsl = ToHSB(c);
+            HSB hsl = c.ToHSB();
             hsl.S = Saturation;
-            return ToRGB(hsl);
+            return hsl.ToRGB();
         }
 
 
@@ -103,11 +103,11 @@ namespace OpenPainter.ColorPicker
         /// <param name="c">The original colour</param> 
         /// <param name="Saturation">The saturation delta</param> 
         /// <returns>An adjusted colour</returns> 
-        public static Color ModifySaturation(Color c, double Saturation)
+        public static Color ModifySaturation(this Color c, double Saturation)
         {
-            HSB hsl = ToHSB(c);
+            HSB hsl = c.ToHSB();
             hsl.S *= Saturation;
-            return ToRGB(hsl);
+            return hsl.ToRGB();
         }
 
 
@@ -118,11 +118,11 @@ namespace OpenPainter.ColorPicker
         /// <param name="c">An original colour</param> 
         /// <param name="Hue">The Hue value to impose</param> 
         /// <returns>An adjusted colour</returns> 
-        public static Color SetHue(Color c, double Hue)
+        public static Color SetHue(this Color c, double Hue)
         {
-            HSB hsl = ToHSB(c);
+            HSB hsl = c.ToHSB();
             hsl.H = Hue;
-            return ToRGB(hsl);
+            return hsl.ToRGB();
         }
 
 
@@ -135,11 +135,11 @@ namespace OpenPainter.ColorPicker
         /// <param name="c">The original colour</param> 
         /// <param name="Hue">The Hue delta</param> 
         /// <returns>An adjusted colour</returns> 
-        public static Color ModifyHue(Color c, double Hue)
+        public static Color ModifyHue(this Color c, double Hue)
         {
-            HSB hsl = ToHSB(c);
+            HSB hsl = c.ToHSB();
             hsl.H *= Hue;
-            return ToRGB(hsl);
+            return hsl.ToRGB();
         }
 
 
@@ -284,7 +284,7 @@ namespace OpenPainter.ColorPicker
         /// </summary>
         /// <param name="color"></param>
         /// <returns></returns>
-        public static Color GetNearestWebSafeColor(Color color)
+        public static Color GetNearestWebSafeColor(this Color color)
         {
             int r = (int)(Round(color.R / 255.0 * 5) / 5 * 255);
             int g = (int)(Round(color.G / 255.0 * 5) / 5 * 255);
@@ -293,77 +293,125 @@ namespace OpenPainter.ColorPicker
             return Color.FromArgb(r, g, b);
         }
 
-        #endregion
-
-        public struct HSB
+        public static bool isRgbComponent(this ColorComponent c)
         {
-            private double h, s, b;
-            public HSB(double h, double s, double b)
-            {
-                this.h = h;
-                this.s = s;
-                this.b = b;
-            }
-            
-            public double H
-            {
-                get { return h; }
-                set { h = value.LimitInRange(0,1); }
-            }
-
-            public double S
-            {
-                get { return s; }
-                set { s = value.LimitInRange(0, 1); }
-            }
-
-            public double B
-            {
-                get { return b; }
-                set { b = value.LimitInRange(0, 1); }
-            }
+            return c == ColorComponent.Red || c == ColorComponent.Green || c == ColorComponent.Blue;
         }
 
-        public struct CMYK
+        public static bool isHsbComponent(this ColorComponent c)
         {
-            public static CMYK Black { get { return new CMYK(0, 0, 0, 1); } }
+            return c == ColorComponent.Hue || c == ColorComponent.Saturation || c == ColorComponent.Brightness;
+        }
+    }
 
-            private double c, m, y, k;
+    #endregion
 
-            /// <summary>
-            /// For CMYK colors: cyan, magenta, yellow, and key (black)
-            /// </summary>
-            public CMYK(double c, double m, double y, double k)
+    #region HSB Color Struct
+
+    public struct HSB
+    {
+        private double h, s, b;
+        public HSB(double h, double s, double b)
+        {
+            this.h = h;
+            this.s = s;
+            this.b = b;
+        }
+
+        public double H
+        {
+            get { return h; }
+            set { h = value.LimitInRange(0, 1); }
+        }
+
+        public double S
+        {
+            get { return s; }
+            set { s = value.LimitInRange(0, 1); }
+        }
+
+        public double B
+        {
+            get { return b; }
+            set { b = value.LimitInRange(0, 1); }
+        }
+    }
+
+    #endregion
+
+    #region CMYK Color Struct
+
+    public struct CMYK
+    {
+        public static CMYK Black { get { return new CMYK(0, 0, 0, 1); } }
+
+        private double c, m, y, k;
+
+        /// <summary>
+        /// For CMYK colors: cyan, magenta, yellow, and key (black)
+        /// </summary>
+        public CMYK(double c, double m, double y, double k)
+        {
+            this.c = c;
+            this.m = m;
+            this.y = y;
+            this.k = k;
+        }
+
+        public double C
+        {
+            get { return c; }
+            set { c = value.LimitInRange(0, 1); }
+        }
+
+        public double M
+        {
+            get { return m; }
+            set { m = value.LimitInRange(0, 1); }
+        }
+
+        public double Y
+        {
+            get { return y; }
+            set { y = value.LimitInRange(0, 1); }
+        }
+
+        public double K
+        {
+            get { return k; }
+            set { k = value.LimitInRange(0, 1); }
+        }
+    }
+
+    #endregion
+
+    public enum ColorComponent { Hue, Saturation, Brightness, Red, Green, Blue, HSB, RGB }
+
+    public static class MathExtensions
+    {
+        public static int LimitInRange(this int value, int min, int max)
+        {
+            if (value <= min)
+                return min;
+            else if (value >= max)
+                return max;
+            else
+                return value;
+        }
+        public static double LimitInRange(this double value, double min, double max)
+        {
+            if (value < min)
             {
-                this.c = c;
-                this.m = m;
-                this.y = y;
-                this.k = k;
+                Console.WriteLine("LimitInRange: Min {0} from value {1} ", min, value);
+                return min;
             }
-
-            public double C
+            else if (value > max)
             {
-                get { return c; }
-                set { c = value.LimitInRange(0, 1); }
+                Console.WriteLine("LimitInRange: Max {0} from value {1} ", max, value);
+                return max;
             }
-
-            public double M
-            {
-                get { return m; }
-                set { m = value.LimitInRange(0, 1); }
-            }
-
-            public double Y
-            {
-                get { return y; }
-                set { y = value.LimitInRange(0, 1); }
-            }
-
-            public double K
-            {
-                get { return k; }
-                set { k = value.LimitInRange(0, 1); }
-            }
+            else
+                return value;
         }
     }
 }
