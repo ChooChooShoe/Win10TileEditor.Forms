@@ -32,17 +32,15 @@ namespace Win10TileEditor
 
         private void InitializeComponent()
         {
-            OpenPainter.ColorPicker.HSB hsb1 = new OpenPainter.ColorPicker.HSB();
-            OpenPainter.ColorPicker.HSB hsb2 = new OpenPainter.ColorPicker.HSB();
             this.m_lbl_Primary_Color = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.tcMain = new System.Windows.Forms.TabControl();
             this.pageColor = new System.Windows.Forms.TabPage();
+            this.ctrl2DColorBox1 = new OpenPainter.ColorPicker.ColorBox2D();
+            this.ctrlVerticalColorSlider2 = new OpenPainter.ColorPicker.VerticalColorSlider();
             this.pageSwatch = new System.Windows.Forms.TabPage();
             this.gOtherColors = new System.Windows.Forms.GroupBox();
             this.gNamedColors = new System.Windows.Forms.GroupBox();
-            this.ctrl2DColorBox1 = new OpenPainter.ColorPicker.ColorBox2D();
-            this.ctrlVerticalColorSlider2 = new OpenPainter.ColorPicker.VerticalColorSlider();
             this.tcMain.SuspendLayout();
             this.pageColor.SuspendLayout();
             this.pageSwatch.SuspendLayout();
@@ -82,7 +80,6 @@ namespace Win10TileEditor
             // 
             // pageColor
             // 
-            this.pageColor.BackColor = System.Drawing.SystemColors.Control;
             this.pageColor.Controls.Add(this.ctrl2DColorBox1);
             this.pageColor.Controls.Add(this.label2);
             this.pageColor.Controls.Add(this.ctrlVerticalColorSlider2);
@@ -93,6 +90,29 @@ namespace Win10TileEditor
             this.pageColor.Size = new System.Drawing.Size(385, 266);
             this.pageColor.TabIndex = 0;
             this.pageColor.Text = "Colors";
+            // 
+            // ctrl2DColorBox1
+            // 
+            this.ctrl2DColorBox1.BaseColorComponent = OpenPainter.ColorPicker.ColorComponent.Hue;
+            this.ctrl2DColorBox1.Location = new System.Drawing.Point(3, 3);
+            this.ctrl2DColorBox1.Name = "ctrl2DColorBox1";
+            this.ctrl2DColorBox1.RGB = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.ctrl2DColorBox1.Size = new System.Drawing.Size(260, 260);
+            this.ctrl2DColorBox1.TabIndex = 0;
+            this.ctrl2DColorBox1.WebSafeColorsOnly = false;
+            this.ctrl2DColorBox1.SelectionChanged += new System.EventHandler(this.ctrl2DColorBox1_SelectionChanged);
+            // 
+            // ctrlVerticalColorSlider2
+            // 
+            this.ctrlVerticalColorSlider2.BaseColorComponent = OpenPainter.ColorPicker.ColorComponent.Hue;
+            this.ctrlVerticalColorSlider2.Location = new System.Drawing.Point(272, 0);
+            this.ctrlVerticalColorSlider2.MinimumSize = new System.Drawing.Size(22, 25);
+            this.ctrlVerticalColorSlider2.Name = "ctrlVerticalColorSlider2";
+            this.ctrlVerticalColorSlider2.RGB = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.ctrlVerticalColorSlider2.Size = new System.Drawing.Size(40, 264);
+            this.ctrlVerticalColorSlider2.TabIndex = 1;
+            this.ctrlVerticalColorSlider2.WebSafeColorsOnly = false;
+            this.ctrlVerticalColorSlider2.SelectionChanged += new System.EventHandler(this.ctrlVerticalColorSlider2_SelectionChanged);
             // 
             // pageSwatch
             // 
@@ -125,36 +145,6 @@ namespace Win10TileEditor
             this.gNamedColors.TabIndex = 0;
             this.gNamedColors.TabStop = false;
             this.gNamedColors.Text = "Named Colors";
-            // 
-            // ctrl2DColorBox1
-            // 
-            this.ctrl2DColorBox1.BaseColorComponent = OpenPainter.ColorPicker.ColorComponent.Hue;
-            hsb1.B = 1D;
-            hsb1.H = 0D;
-            hsb1.S = 1D;
-            this.ctrl2DColorBox1.HSB = hsb1;
-            this.ctrl2DColorBox1.Location = new System.Drawing.Point(3, 3);
-            this.ctrl2DColorBox1.Name = "ctrl2DColorBox1";
-            this.ctrl2DColorBox1.RGB = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.ctrl2DColorBox1.Size = new System.Drawing.Size(260, 260);
-            this.ctrl2DColorBox1.TabIndex = 0;
-            this.ctrl2DColorBox1.WebSafeColorsOnly = false;
-            this.ctrl2DColorBox1.SelectionChanged += new System.EventHandler(this.ctrl2DColorBox1_SelectionChanged);
-            // 
-            // ctrlVerticalColorSlider2
-            // 
-            this.ctrlVerticalColorSlider2.BaseColorComponent = OpenPainter.ColorPicker.ColorComponent.Hue;
-            hsb2.B = 1D;
-            hsb2.H = 0D;
-            hsb2.S = 1D;
-            this.ctrlVerticalColorSlider2.HSB = hsb2;
-            this.ctrlVerticalColorSlider2.Location = new System.Drawing.Point(272, 0);
-            this.ctrlVerticalColorSlider2.Name = "ctrlVerticalColorSlider2";
-            this.ctrlVerticalColorSlider2.RGB = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.ctrlVerticalColorSlider2.Size = new System.Drawing.Size(40, 264);
-            this.ctrlVerticalColorSlider2.TabIndex = 1;
-            this.ctrlVerticalColorSlider2.WebSafeColorsOnly = false;
-            this.ctrlVerticalColorSlider2.SelectionChanged += new System.EventHandler(this.ctrlVerticalColorSlider2_SelectionChanged);
             // 
             // ColorSwatchPicker
             // 

@@ -7,7 +7,8 @@ using System.Xml.Linq;
 
 namespace Win10TileEditor
 {
-	public abstract class BaseItem
+    [Obsolete]
+    public abstract class BaseItem
     {
         public DirectoryInfo DirectoryInfo { get; set; }
         public string ItemPath { get; set; }
@@ -27,8 +28,8 @@ namespace Win10TileEditor
 			set 
 			{
                 isChecked = value;
-				if (Owner != null)
-					Owner.OnNodesChanged(this);
+				//if (Owner != null)
+					//Owner.OnNodesChanged(this);
 			}
 		}
 
@@ -74,7 +75,8 @@ namespace Win10TileEditor
 		}
 	}
 
-	public class FolderItem : BaseItem
+    [Obsolete]
+    public class FolderItem : BaseItem
     {
         public override string Name
         {
@@ -100,7 +102,8 @@ namespace Win10TileEditor
 		}
 	}
 
-	public class FileItem : BaseItem
+    [Obsolete]
+    public class FileItem : BaseItem
 	{
 		public override string Name
 		{
@@ -126,6 +129,7 @@ namespace Win10TileEditor
 			Parent = parent;
 			Owner = owner;
 		}
+        /*
         public void LoadShortcut(IWshRuntimeLibrary.WshShell shell)
         {
             Console.WriteLine("OPEN SHORTCUT "+ ItemPath);
@@ -137,6 +141,6 @@ namespace Win10TileEditor
                 var file = new FileInfo(TargetPath.Substring(0, TargetPath.Length - 3) + "VisualElementsManifest.xml");
                 ManifestData = new VisualManifest(file);
             }
-        }
+        }*/
 	}
 }

@@ -73,6 +73,46 @@ namespace Win10TileEditor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap document_a4_blank {
+            get {
+                object obj = ResourceManager.GetObject("document_a4_blank", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap documents_add {
+            get {
+                object obj = ResourceManager.GetObject("documents_add", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap folder_classic {
+            get {
+                object obj = ResourceManager.GetObject("folder_classic", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap folder_classic_opened {
+            get {
+                object obj = ResourceManager.GetObject("folder_classic_opened", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap NoIcon150x150 {
             get {
                 object obj = ResourceManager.GetObject("NoIcon150x150", resourceCulture);
@@ -96,6 +136,26 @@ namespace Win10TileEditor.Properties {
         internal static System.Drawing.Bitmap NoIcon70x70 {
             get {
                 object obj = ResourceManager.GetObject("NoIcon70x70", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap UknownIcon150 {
+            get {
+                object obj = ResourceManager.GetObject("UknownIcon150", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap UknownIcon70 {
+            get {
+                object obj = ResourceManager.GetObject("UknownIcon70", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

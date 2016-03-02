@@ -17,31 +17,19 @@ namespace Win10TileEditor
 
 		public int Compare(object x, object y)
 		{
-			BaseItem a = x as BaseItem;
-			BaseItem b = y as BaseItem;
+            BaseViewItem a = x as BaseViewItem;
+            BaseViewItem b = y as BaseViewItem;
 			int res = 0;
 
 			if (_mode == "Date")
 				res = DateTime.Compare(a.Date, b.Date);
-			else if (_mode == "Size")
-			{
-				if (a.Size < b.Size)
-					res = -1;
-				else if (a.Size > b.Size)
-					res = 1;
-			}
 			else
 				res = string.Compare(a.Name, b.Name);
 
-			if (_order == SortOrder.Ascending)
+			if (_order == SortOrder.Descending)
 				return -res;
 			else
 				return res;
-		}
-
-		private string GetData(object x)
-		{
-			return (x as BaseItem).Name;
 		}
 	}
 }

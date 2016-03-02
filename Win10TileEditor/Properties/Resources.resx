@@ -130,4 +130,22 @@
   <data name="NoIcon150x1501" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\NoIcon150x1501.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="document_a4_blank" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\icons\document_a4_blank.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="folder_classic" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\icons\folder_classic.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="folder_classic_opened" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\icons\folder_classic_opened.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="UknownIcon150" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\UknownIcon150.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="UknownIcon70" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\UknownIcon70.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="documents_add" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\icons\documents_add.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

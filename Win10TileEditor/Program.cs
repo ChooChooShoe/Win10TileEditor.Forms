@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Collections.ObjectModel;
-using IWshRuntimeLibrary;
 
 namespace Win10TileEditor
 {
@@ -18,8 +13,12 @@ namespace Win10TileEditor
         [STAThread]
         static void Main()
         {
+            //ShellHelp.tezt();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            Application.Run(new frmIconList());
+
             TileMaker m = new TileMaker();
             Application.Run(new MainForm(m));
             m.onClose();
@@ -33,22 +32,22 @@ namespace Win10TileEditor
             Environment.GetFolderPath(Environment.SpecialFolder.Programs)
         };
 
-        public WshShell shell { get; private set; }
+        //public WshShell shell { get; private set; }
 
         public TileMaker()
         {
-            this.shell = new WshShell();
+            //this.shell = new WshShell();
         }
         
         public void CreateShortcut()
         {
-            object shDesktop = (object)"Desktop";
-            string shortcutAddress = (string)shell.SpecialFolders.Item(ref shDesktop) + @"\Notepad.lnk";
-            IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutAddress);
-            shortcut.Description = "New shortcut for a Notepad";
-            shortcut.Hotkey = "Ctrl+Shift+N";
+            //object shDesktop = (object)"Desktop";
+           // string shortcutAddress = (string)shell.SpecialFolders.Item(ref shDesktop) + @"\Notepad.lnk";
+            //IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutAddress);
+           // shortcut.Description = "New shortcut for a Notepad";
+            //shortcut.Hotkey = "Ctrl+Shift+N";
             //shortcut.TargetPath = Environment.GetFolderPath(Environment.SpecialFolders.System) + @"\notepad.exe";
-            shortcut.Save();
+          //  shortcut.Save();
         }
         public void updateLink()
         {
@@ -56,9 +55,11 @@ namespace Win10TileEditor
             //(ls "C:\Users\Tim\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Heaven's Feel.lnk").lastwritetime = get-date
 
         }
+
+        [System.Diagnostics.Conditional("DEBUG")]
         internal void onClose()
         {
-
+           Console.Write(Aga.Controls.PerformanceAnalyzer.GenerateReport());
         }
     }
 }
